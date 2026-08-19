@@ -1,0 +1,35 @@
+# Maven & Build artifacts
+target/
+*.class
+*.jar
+*.war
+*.ear
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse / Spring Tool Suite (STS)
+.settings/
+.project
+.classpath
+.metadata/
+bin/
+tmp/
+
+# VS Code
+.vscode/
+
+# Logs & OS specifics
+*.log
+.DS_Store
+Thumbs.db
+
+# Docker / Environment local files
+.env.local
