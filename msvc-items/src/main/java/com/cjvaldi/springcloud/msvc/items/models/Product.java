@@ -2,6 +2,9 @@ package com.cjvaldi.springcloud.msvc.items.models;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({"id", "name", "price", "createAt", "port"})
 public class Product {
     private Long id;
     private String name;

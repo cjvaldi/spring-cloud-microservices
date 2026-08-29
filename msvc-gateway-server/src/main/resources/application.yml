@@ -1,0 +1,39 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+          - id: msvc-products
+            uri: lb://msvc-products
+            predicates:
+            - Path=/api/products/**
+            # - Header=token, 12345 # se pueden agregar expresiones regulares \d+
+            # - Method=GET, POST
+            # - Query=color, verde  # si se emite el valor acepta cualquier valor.
+            # - Cookie=color, azul
+            # - Header=Content-Type, application/json
+            filters:
+            - StripPrefix=2
+            # Ejemplos alternativos de uso de filtros, este es usando todos los pararmetros posibles
+            # - name: SampleCookie
+            #   args:
+            #     message: Hola mi mensaje personalizado para productos!
+            #     name: user
+            #     value: Cristian
+            # Usando todos los pararmetros en una solo linea ->implementa una funcion en la clase principal.
+            - SampleCookie=Hola mi mensaje personalizado para productos!, user, Cristian
+            # Usando nombre diferente->implemesobbrescribiendo el método name() en la clase principal.
+            # - EjemploCookie=Hola mi mensaje personalizado para productos!, user, Cristian
+            # Si no lleva algun parametro se puede omitir, porque esta validado el nullable en la clase principal.
+          - id: msvc-items
+            uri: lb://msvc-items
+            predicates:
+            - Path=/api/items/**
+            filters:
+            - StripPrefix=2
+            - AddRequestHeader=token-request, aabbfsfsfsdfs
+            - AddResponseHeader=token-response, 158745874
+            - AddRequestParameter=name, Cristian
+            - SetResponseHeader=Content-Type, text/plain
+            

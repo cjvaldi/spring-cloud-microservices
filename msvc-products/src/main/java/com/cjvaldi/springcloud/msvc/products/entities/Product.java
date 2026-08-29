@@ -2,6 +2,8 @@ package com.cjvaldi.springcloud.msvc.products.entities;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "products")
+@JsonPropertyOrder({"id", "name", "price", "createAt", "port"})
 public class Product {
 
     @Id
