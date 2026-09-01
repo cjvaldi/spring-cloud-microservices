@@ -1,3 +1,24 @@
+resilience4j:
+  circuitbreaker:
+    configs:
+      defecto:
+        sliding-window-size: 6
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 4
+        slow-call-duration-threshold: 3s
+        slow-call-rate-threshold: 50
+    instances:
+      products:
+        base-config: defecto    
+  timelimiter:
+    configs:
+      defecto:
+        timeout-duration: 3s
+    instances:
+      products:
+        base-config: defecto 
+
 spring:
   cloud:
     gateway:
@@ -14,6 +35,11 @@ spring:
             # - Cookie=color, azul
             # - Header=Content-Type, application/json
             filters:
+            - name: CircuitBreaker
+              args:
+                name: products
+                statusCodes: 500
+                fallbackUri: forward:/api/items/5
             - StripPrefix=2
             # Ejemplos alternativos de uso de filtros, este es usando todos los pararmetros posibles
             # - name: SampleCookie
@@ -23,7 +49,7 @@ spring:
             #     value: Cristian
             # Usando todos los pararmetros en una solo linea ->implementa una funcion en la clase principal.
             - SampleCookie=Hola mi mensaje personalizado para productos!, user, Cristian
-            # Usando nombre diferente->implemesobbrescribiendo el método name() en la clase principal.
+            # Usando nombre diferente->implementar sobrescribiendo el método name() en la clase principal.
             # - EjemploCookie=Hola mi mensaje personalizado para productos!, user, Cristian
             # Si no lleva algun parametro se puede omitir, porque esta validado el nullable en la clase principal.
           - id: msvc-items
