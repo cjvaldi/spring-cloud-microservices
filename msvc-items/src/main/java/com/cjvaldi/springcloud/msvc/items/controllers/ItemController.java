@@ -11,20 +11,27 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@RefreshScope
 @RestController
 public class ItemController {
 
@@ -33,15 +40,38 @@ public class ItemController {
     private final ItemService service;
     private final CircuitBreakerFactory cBreakerFactory;
 
+    @Value("${configuracion.texto}")
+    private String text;
+
     // esta anotación @Qualifier("ItemServiceWebClient") es para inyectar el
     // servicio que implementa la interfaz ItemService, en este caso el
     // ItemServiceWebClient, ya que hay otra implementación ItemServiceFeing
+
+    @Autowired
+    private Environment env;
 
     public ItemController(@Qualifier("itemServiceWebClient") ItemService service,
             CircuitBreakerFactory cBreakerFactory) {
         this.service = service;
         this.cBreakerFactory = cBreakerFactory;
     }
+
+    @GetMapping("/fetch-configs")
+    public ResponseEntity<?> fetchConfigs(@Value("${server.port}") String port) {
+        Map<String, String> json = new HashMap<>();
+        json.put("texto", text);
+        json.put("port", port);
+        logger.info("texto: " + text);
+        logger.info("port: " + port);
+
+        if(env.getActiveProfiles().length > 0 && env.getActiveProfiles()[0].equals("dev")) {
+            json.put("autor.nombre", env.getProperty("configuracion.autor.nombre"));
+            json.put("autor.email", env.getProperty("configuracion.autor.email"));
+        }
+
+        return ResponseEntity.ok(json);
+    }
+    
 
     @GetMapping
     public List<Item> list(@RequestParam(name = "name", required = false) String name,

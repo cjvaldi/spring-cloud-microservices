@@ -33,3 +33,6 @@ Thumbs.db
 
 # Docker / Environment local files
 .env.local
+
+# Carpeta de configuración de Micro Servicios
+config/
