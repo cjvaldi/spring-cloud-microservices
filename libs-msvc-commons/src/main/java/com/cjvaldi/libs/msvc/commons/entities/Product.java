@@ -1,15 +1,35 @@
-package com.cjvaldi.springcloud.msvc.items.models;
+package com.cjvaldi.libs.msvc.commons.entities;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+// sirve para ordenar los campos en el json de salida, pero no es necesario
+// import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"id", "name", "price", "createAt", "port"})
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+@Entity
+@Table(name = "products")
+// @JsonPropertyOrder({"id", "name", "price", "createAt", "port"})
 public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private Double price;
+
+    @Column(name = "create_at")
     private LocalDate createAt;
+
+    @Transient
     private int port;
 
     public Long getId() {
@@ -51,6 +71,7 @@ public class Product {
     public void setPort(int port) {
         this.port = port;
     }
-    
+
+
 
 }

@@ -1,0 +1,25 @@
+en el POM quitamos todo lo que siga despues de las <dependencies>
+
+Para convertir esta libreria en JAR y compartirla en el repositorio local usamos
+
+./mvnw install
+
+se crea en /target/test-classes/libs-msvc-commons-0.0.1-SNAPSHOT.JAR
+
+del pom copiamos 
+
+	<groupId>com.cjvaldi.libs.msvc.commons</groupId>
+	<artifactId>libs-msvc-commons</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+    y lo pegamos en el pom donde lo vamos a compartir items y products
+
+    <dependency>
+    	<groupId>com.cjvaldi.libs.msvc.commons</groupId>
+	    <artifactId>libs-msvc-commons</artifactId>
+	    <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+    luego eliminamos los imports entities de cada msvc donde compartimos la clase commons
+    y la reemplamos con el nuevo imports
+

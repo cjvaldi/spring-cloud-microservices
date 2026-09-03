@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 // import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 import com.cjvaldi.springcloud.msvc.items.models.Item;
-import com.cjvaldi.springcloud.msvc.items.models.Product;
 
 // @Primary
 // alternativa @Qualifier("serviceWebClient") para inyectar este servicio en lugar del FeignClient

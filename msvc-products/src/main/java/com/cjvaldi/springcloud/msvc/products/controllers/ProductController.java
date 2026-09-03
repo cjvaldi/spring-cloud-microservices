@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cjvaldi.springcloud.msvc.products.entities.Product;
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 import com.cjvaldi.springcloud.msvc.products.services.ProductService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

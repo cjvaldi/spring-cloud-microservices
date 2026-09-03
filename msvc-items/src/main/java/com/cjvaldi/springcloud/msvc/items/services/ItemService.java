@@ -3,8 +3,8 @@ package com.cjvaldi.springcloud.msvc.items.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 import com.cjvaldi.springcloud.msvc.items.models.Item;
-import com.cjvaldi.springcloud.msvc.items.models.Product;
 
 
 public interface ItemService {

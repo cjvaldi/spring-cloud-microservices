@@ -1,5 +1,6 @@
 package com.cjvaldi.springcloud.msvc.items.models;
 
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"product", "quantity", "total"})

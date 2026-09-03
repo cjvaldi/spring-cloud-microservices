@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 import com.cjvaldi.springcloud.msvc.items.clients.ProductFeingClient;
 import com.cjvaldi.springcloud.msvc.items.models.Item;
-import com.cjvaldi.springcloud.msvc.items.models.Product;
 
 import feign.FeignException;
 

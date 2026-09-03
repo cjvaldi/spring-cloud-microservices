@@ -3,7 +3,7 @@ package com.cjvaldi.springcloud.msvc.products.services;
 import java.util.List;
 import java.util.Optional;
 
-import com.cjvaldi.springcloud.msvc.products.entities.Product;
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 
 public interface ProductService {
 

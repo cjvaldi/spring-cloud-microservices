@@ -2,8 +2,8 @@ package com.cjvaldi.springcloud.msvc.items.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cjvaldi.libs.msvc.commons.entities.Product;
 import com.cjvaldi.springcloud.msvc.items.models.Item;
-import com.cjvaldi.springcloud.msvc.items.models.Product;
 import com.cjvaldi.springcloud.msvc.items.services.ItemService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;

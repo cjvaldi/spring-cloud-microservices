@@ -70,6 +70,13 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
+
+		<dependency>
+            <groupId>com.cjvaldi.libs.msvc.commons</groupId>
+            <artifactId>libs-msvc-commons</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+		
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
