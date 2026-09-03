@@ -35,4 +35,5 @@ Thumbs.db
 .env.local
 
 # Carpeta de configuración de Micro Servicios
+# Repositorio externo de configuraciones (vinculado a https://github.com/cjvaldi/msvc-config-server.git)
 config/

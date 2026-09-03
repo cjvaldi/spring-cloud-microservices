@@ -28,13 +28,13 @@ public class ItemServiceWebClient implements ItemService {
     @Override
     public List<Item> findAll() {
         return this.client.build()
-        .get()
-        .accept(MediaType.APPLICATION_JSON)
-        .retrieve()
-        .bodyToFlux(Product.class)
-        .map(product -> new Item(product, new Random().nextInt(10)+1))
-        .collectList()
-        .block();
+                .get()
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToFlux(Product.class)
+                .map(product -> new Item(product, new Random().nextInt(10) + 1))
+                .collectList()
+                .block();
     }
 
     @Override
@@ -43,16 +43,53 @@ public class ItemServiceWebClient implements ItemService {
         params.put("id", id);
         // al usar circuitBreaker no usamos try ya que CircuitBreak lo pone en abierto
         // try {
-            return Optional.ofNullable(client.build().get().uri("/{id}", params)
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono(Product.class)
-            .map(product -> new Item(product, new Random().nextInt(10)+1))
-            .block());
+        return Optional.ofNullable(client.build().get().uri("/{id}", params)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Product.class)
+                .map(product -> new Item(product, new Random().nextInt(10) + 1))
+                .block());
         // } catch (WebClientResponseException e) {
-        //     return Optional.empty();
+        // return Optional.empty();
         // }
 
+    }
+
+    @Override
+    public Product save(Product product) {
+        return client.build()
+                .post()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(product)
+                .retrieve()
+                .bodyToMono(Product.class).block();
+    }
+
+    @Override
+    public Product update(Product product, Long id) {
+        Map<String, Long> params = new HashMap<>();
+        params.put("id", id);
+        return client.build()
+                .put()
+                .uri("/{id}", params)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(product)
+                .retrieve()
+                .bodyToMono(Product.class)
+                .block();
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        Map<String, Long> params = new HashMap<>();
+        params.put("id", id);
+        client.build()
+                .delete()
+                .uri("/{id}", params)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
     }
 
 }
