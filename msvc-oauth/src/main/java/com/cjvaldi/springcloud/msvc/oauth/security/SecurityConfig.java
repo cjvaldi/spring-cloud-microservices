@@ -13,7 +13,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
-// import org.springframework.beans.factory.annotation.Autowired;
 // import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +24,10 @@ import org.springframework.security.config.annotation.web.configuration.OAuth2Au
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-// import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.security.core.userdetails.User;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -41,7 +40,7 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+// import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -52,8 +51,11 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 @Configuration
 public class SecurityConfig {
 
-	// @Autowired 
-	// private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
+
+	SecurityConfig(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
 
 	@Bean
 	@Order(1)
@@ -92,44 +94,22 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	// Por defecto, Spring Authorization Server solo incluye claims estándar (sub,
-	// aud, iss, exp, scope). En este paso inyectaremos una lista de roles o
-	// authorities del usuario autenticado (por ejemplo, ROLE_USER, ROLE_ADMIN)
-	// dentro del payload del JWT para que los microservicios downstream
-	// (msvc-gateway-server, msvc-items, msvc-products) puedan autorizar por roles.
-	@Bean
-	OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
-		return context -> {
-			if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
-				Authentication principal = context.getPrincipal();
-				List<String> roles = principal.getAuthorities().stream()
-						.map(GrantedAuthority::getAuthority)
-						.toList();
+		// Solo para pruebas
+	// @Bean
+	// UserDetailsService userDetailsService() {
+	// 	UserDetails userDetails = User.builder()
+	// 			.username("cristian")
+	// 			.password("{noop}12345")
+	// 			.roles("USER")
+	// 			.build();
+	// 	UserDetails admin = User.builder()
+	// 			.username("admin")
+	// 			.password("{noop}12345")
+	// 			.roles("USER", "ADMIN")
+	// 			.build();
 
-				context.getClaims()
-				.claim("roles", roles)
-				.claim("data","data adicional en el token");
-
-			}
-		};
-	}
-
-	// Solo para pruebas
-	@Bean
-	UserDetailsService userDetailsService() {
-		UserDetails userDetails = User.builder()
-				.username("cristian")
-				.password("{noop}12345")
-				.roles("USER")
-				.build();
-		UserDetails admin = User.builder()
-				.username("admin")
-				.password("{noop}12345")
-				.roles("USER", "ADMIN")
-				.build();
-
-		return new InMemoryUserDetailsManager(userDetails, admin);
-	}
+	// 	return new InMemoryUserDetailsManager(userDetails, admin);
+	// }
 
 
 
@@ -137,8 +117,8 @@ public class SecurityConfig {
 	RegisteredClientRepository registeredClientRepository() {
 		RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("gateway-app")
-				.clientSecret("{noop}12345")
-				//.clientSecret(passwordEncoder.encode("12345"))
+				// .clientSecret("{noop}12345")
+				.clientSecret(passwordEncoder.encode("12345"))
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -149,8 +129,8 @@ public class SecurityConfig {
 				.postLogoutRedirectUri("http://127.0.0.1:8090/logout")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
-				.scope("write") // para pruebas
-				.scope("read")
+				// .scope("write") // para pruebas
+				// .scope("read")
 				.clientSettings(ClientSettings.builder()
 						.requireAuthorizationConsent(false)
 						.requireProofKey(false) // 👈 El método exacto es requireProofKey
@@ -193,6 +173,28 @@ public class SecurityConfig {
 	@Bean
 	AuthorizationServerSettings authorizationServerSettings() {
 		return AuthorizationServerSettings.builder().build();
+	}
+
+	// Por defecto, Spring Authorization Server solo incluye claims estándar (sub,
+	// aud, iss, exp, scope). En este paso inyectaremos una lista de roles o
+	// authorities del usuario autenticado (por ejemplo, ROLE_USER, ROLE_ADMIN)
+	// dentro del payload del JWT para que los microservicios downstream
+	// (msvc-gateway-server, msvc-items, msvc-products) puedan autorizar por roles.
+	@Bean
+	OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
+		return context -> {
+			if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+				Authentication principal = context.getPrincipal();
+				List<String> roles = principal.getAuthorities().stream()
+						.map(GrantedAuthority::getAuthority)
+						.toList();
+
+				context.getClaims()
+				.claim("roles", roles)
+				.claim("data","data adicional en el token");
+
+			}
+		};
 	}
 }
 
