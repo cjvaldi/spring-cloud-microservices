@@ -41,7 +41,7 @@ public class User {
 
     @Column(nullable = false)
     @NotBlank(message = "La contraseña no puede estar vacía")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     // @Column(nullable = false)
