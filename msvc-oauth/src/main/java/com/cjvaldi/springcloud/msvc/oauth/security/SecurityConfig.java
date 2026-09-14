@@ -4,6 +4,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 // import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -131,6 +133,10 @@ public class SecurityConfig {
 				.scope(OidcScopes.PROFILE)
 				// .scope("write") // para pruebas
 				// .scope("read")
+				.tokenSettings(TokenSettings
+					.builder()
+					.accessTokenTimeToLive(Duration.ofHours(2))
+					.refreshTokenTimeToLive(Duration.ofDays(1)).build())
 				.clientSettings(ClientSettings.builder()
 						.requireAuthorizationConsent(false)
 						.requireProofKey(false) // 👈 El método exacto es requireProofKey

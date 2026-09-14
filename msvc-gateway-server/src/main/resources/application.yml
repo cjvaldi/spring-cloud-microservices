@@ -46,7 +46,7 @@ spring:
   cloud:
     gateway:
       server:
-        webflux:
+        webmvc:
           routes:
           - id: msvc-oauth
             uri: lb://msvc-oauth
@@ -83,7 +83,7 @@ spring:
             #     name: user
             #     value: Cristian
             # Usando todos los pararmetros en una solo linea ->implementa una funcion en la clase principal.
-            - SampleCookie=Hola mi mensaje personalizado para productos!, user, Cristian
+            #- SampleCookie=Hola mi mensaje personalizado para productos!, user, Cristian
             # Usando nombre diferente->implementar sobrescribiendo el método name() en la clase principal.
             # - EjemploCookie=Hola mi mensaje personalizado para productos!, user, Cristian
             # Si no lleva algun parametro se puede omitir, porque esta validado el nullable en la clase principal.
