@@ -19,7 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -37,8 +36,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
 @RefreshScope
 @RestController
 public class ItemController {
@@ -46,7 +43,7 @@ public class ItemController {
     private final Logger logger = LoggerFactory.getLogger(ItemController.class);
 
     private final ItemService service;
-    private final CircuitBreakerFactory cBreakerFactory;
+    private final CircuitBreakerFactory<?, ?> cBreakerFactory;
 
     @Value("${configuracion.texto}")
     private String text;
@@ -55,12 +52,14 @@ public class ItemController {
     // servicio que implementa la interfaz ItemService, en este caso el
     // ItemServiceWebClient, ya que hay otra implementación ItemServiceFeing
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     // public ItemController(@Qualifier("itemServiceWebClient") ItemService service,
-    public ItemController(@Qualifier("itemServiceFeing") ItemService service,
-            CircuitBreakerFactory cBreakerFactory) {
+    //  @Qualifier("itemServiceFeing") 
+    public ItemController(Environment env,
+            @Qualifier("itemServiceWebClient") ItemService service,
+            CircuitBreakerFactory<?, ?> cBreakerFactory) {
+        this.env = env;
         this.service = service;
         this.cBreakerFactory = cBreakerFactory;
     }
@@ -73,20 +72,21 @@ public class ItemController {
         logger.info("texto: " + text);
         logger.info("port: " + port);
 
-        if(env.getActiveProfiles().length > 0 && env.getActiveProfiles()[0].equals("dev")) {
+        if (env.getActiveProfiles().length > 0 && env.getActiveProfiles()[0].equals("dev")) {
             json.put("autor.nombre", env.getProperty("configuracion.autor.nombre"));
             json.put("autor.email", env.getProperty("configuracion.autor.email"));
         }
 
         return ResponseEntity.ok(json);
     }
-    
 
     @GetMapping
     public List<Item> list(@RequestParam(name = "name", required = false) String name,
             @RequestHeader(name = "token-request", required = false) String token) {
-        System.out.println("name: " + name);
-        System.out.println("token-request: " + token);
+                logger.info("Llamada al metodo del controlador ItemController::list()");
+        logger.info("Resquet Parameter: {}", name);
+        logger.info("Token: {}", token);
+        System.out.println(token);
         return service.findAll();
     }
 
@@ -171,18 +171,21 @@ public class ItemController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(@RequestBody Product product) {
+        logger.info("Product creando: {}",product);
         return service.save(product);
     }
-    
+
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/{id}")
     public Product update(@PathVariable Long id, @RequestBody Product product) {
+        logger.info("Product actualizando: {}",product);
         return service.update(product, id);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT) 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
+        logger.info("Product eliminado con id: {}",id);
         service.deleteById(id);
     }
 

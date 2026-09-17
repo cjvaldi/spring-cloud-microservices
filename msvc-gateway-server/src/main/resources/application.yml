@@ -60,22 +60,27 @@ spring:
             - Path=/api/users/**
             filters:
             - StripPrefix=2
-          - id: msvc-products
-            uri: lb://msvc-products
-            predicates:
-            - Path=/api/products/**
+          # solo para webflux con mvc tiene que ser programatica
+          # - id: msvc-products
+          #   uri: lb://msvc-products
+          #   predicates:
+          #   - Path=/api/products/**
+
             # - Header=token, 12345 # se pueden agregar expresiones regulares \d+
             # - Method=GET, POST
             # - Query=color, verde  # si se emite el valor acepta cualquier valor.
             # - Cookie=color, azul
             # - Header=Content-Type, application/json
-            filters:
-            - name: CircuitBreaker
-              args:
-                name: products
-                statusCodes: 500
-                fallbackUri: forward:/api/items/5
-            - StripPrefix=2
+
+            # solo para webflux con mvc tiene que ser programatica
+            # filters:
+            # - name: CircuitBreaker
+            #   args:
+            #     name: products
+            #     statusCodes: 500
+            #     fallbackUri: forward:/api/items/5
+            # - StripPrefix=2
+            
             # Ejemplos alternativos de uso de filtros, este es usando todos los pararmetros posibles
             # - name: SampleCookie
             #   args:

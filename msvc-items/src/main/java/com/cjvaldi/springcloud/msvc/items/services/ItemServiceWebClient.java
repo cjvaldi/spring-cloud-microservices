@@ -19,15 +19,15 @@ import com.cjvaldi.springcloud.msvc.items.models.Item;
 @Service
 public class ItemServiceWebClient implements ItemService {
 
-    private final WebClient.Builder client;
+    private final WebClient client;
 
-    public ItemServiceWebClient(WebClient.Builder client) {
+    public ItemServiceWebClient(WebClient client) {
         this.client = client;
     }
 
     @Override
     public List<Item> findAll() {
-        return this.client.build()
+        return this.client
                 .get()
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -43,7 +43,7 @@ public class ItemServiceWebClient implements ItemService {
         params.put("id", id);
         // al usar circuitBreaker no usamos try ya que CircuitBreak lo pone en abierto
         // try {
-        return Optional.ofNullable(client.build().get().uri("/{id}", params)
+        return Optional.ofNullable(client.get().uri("/{id}", params)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Product.class)
@@ -57,7 +57,7 @@ public class ItemServiceWebClient implements ItemService {
 
     @Override
     public Product save(Product product) {
-        return client.build()
+        return client
                 .post()
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(product)
@@ -69,7 +69,7 @@ public class ItemServiceWebClient implements ItemService {
     public Product update(Product product, Long id) {
         Map<String, Long> params = new HashMap<>();
         params.put("id", id);
-        return client.build()
+        return client
                 .put()
                 .uri("/{id}", params)
                 .accept(MediaType.APPLICATION_JSON)
@@ -84,8 +84,7 @@ public class ItemServiceWebClient implements ItemService {
     public void deleteById(Long id) {
         Map<String, Long> params = new HashMap<>();
         params.put("id", id);
-        client.build()
-                .delete()
+        client.delete()
                 .uri("/{id}", params)
                 .retrieve()
                 .bodyToMono(Void.class)

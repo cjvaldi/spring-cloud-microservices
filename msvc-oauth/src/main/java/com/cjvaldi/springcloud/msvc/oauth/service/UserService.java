@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,35 +22,46 @@ import com.cjvaldi.springcloud.msvc.oauth.models.User;
 @Service
 public class UserService implements UserDetailsService {
 
-    private final WebClient.Builder client;
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    UserService(WebClient.Builder client) {
+    private final WebClient client;
+
+    UserService(WebClient client) {
         this.client = client;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
+        logger.info("Ingresando al proceso de login UserService::loadUserByUsername con {}", username);
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         try {
-            User user = client.build().get().uri("/username/{username}", params)
+            User user = client.get().uri("/username/{username}", params)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .bodyToMono(User.class)
                     .block();
-                    
+
             List<GrantedAuthority> roles = user.getRoles()
                     .stream()
                     .map(role -> new SimpleGrantedAuthority(role.getName()))
                     .collect(Collectors.toList());
-            
-            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                    user.isEnabled(), true, true, true, roles);
+
+            logger.info("Se ha iniciado el login con exito by username:  {}", user);
+
+            return new org.springframework.security.core.userdetails.User(
+                    user.getUsername(), 
+                    user.getPassword(),
+                    user.isEnabled(), 
+                    true, 
+                    true, 
+                    true, 
+                    roles);
 
         } catch (WebClientResponseException e) {
-            throw new UsernameNotFoundException(
-                    "Error en el login, no existe el user '" + username + " ' en el sistema");
+            String error = "Error en el login, no existe el user '" + username + " ' en el sistema";
+            logger.error(error);
+            throw new UsernameNotFoundException(error);
         }
     }
 
