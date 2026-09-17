@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,15 +20,19 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.cjvaldi.springcloud.msvc.oauth.models.User;
 
+import io.micrometer.tracing.Tracer;
+
 @Service
 public class UserService implements UserDetailsService {
 
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final Tracer tracer;
 
     private final WebClient client;
 
-    UserService(WebClient client) {
+    UserService(WebClient client, Tracer tracer) {
         this.client = client;
+        this.tracer = tracer;
     }
 
     @Override
@@ -47,20 +52,22 @@ public class UserService implements UserDetailsService {
                     .map(role -> new SimpleGrantedAuthority(role.getName()))
                     .collect(Collectors.toList());
 
-            logger.info("Se ha iniciado el login con exito by username:  {}", user);
-
+            logger.info("Se ha realizado el login con exito by username:  {}", user);
+            tracer.currentSpan().tag("success.login", "Se ha realizado el login con exito by username: " + username);
             return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(), 
+                    user.getUsername(),
                     user.getPassword(),
-                    user.isEnabled(), 
-                    true, 
-                    true, 
-                    true, 
+                    user.isEnabled(),
+                    true,
+                    true,
+                    true,
                     roles);
 
         } catch (WebClientResponseException e) {
             String error = "Error en el login, no existe el user '" + username + " ' en el sistema";
             logger.error(error);
+            tracer.currentSpan().tag("error.login.message", error + " : " + e.getMessage());
+
             throw new UsernameNotFoundException(error);
         }
     }
