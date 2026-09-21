@@ -1,13 +1,13 @@
 name: docker-springcloud-msvc
 services:
-  config-server:
-    container_name: config-server
-    image: config-server:v1
-    ports:
-      - "8888:8888"
-    restart: always
-    networks:
-      - springcloud
+  # config-server:
+  #   container_name: config-server
+  #   image: config-server:v1
+  #   ports:
+  #     - "8888:8888"
+  #   restart: always
+  #   networks:
+  #     - springcloud
 
   eureka-server:
     container_name: eureka-server
@@ -18,30 +18,35 @@ services:
     networks:
       - springcloud
 
-  mysql8:
-    container_name: mysql8
-    image: mysql:8
-    command: --mysql-native-password=ON
-    ports:
-      - "3308:3306"
-    restart: always
-    networks:
-      - springcloud
-    environment:
-      MYSQL_DATABASE: db_springboot_cloud
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
-      # - MYSQL_ROOT_PASSWORD=
+# Comentamos : usaremos Amazon RDS
+  # mysql8:
+  #   container_name: mysql8
+  #   image: mysql:8
+  #   command: --mysql-native-password=ON
+  #   ports:
+  #     - "3308:3306"
+  #   restart: always
+  #   networks:
+  #     - springcloud
+  #   environment:
+  #     MYSQL_DATABASE: db_springboot_cloud
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: yes
+  #     # - MYSQL_ROOT_PASSWORD=
   msvc-products:
     # container_name: msvc-products     // es opcional para la replica
     image: cjvaldi/products
     deploy:
-      replicas: 3
+      replicas: 1
     restart: always
     networks:
       - springcloud
     depends_on:
-      - mysql8
+      # - mysql8    // usa aws rsd
       - eureka-server
+    environment:
+      MYSQL_URL: db-msvc-products.c4pi86g0cj6s.us-east-1.rds.amazonaws.com:3306
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: cj281174
   msvc-items:
     container_name: msvc-items
     image: cjvaldi/items

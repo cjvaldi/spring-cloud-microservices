@@ -1,3 +1,4 @@
+# FROM --platform=linux/amd64 amazoncorretto:21-alpine-jdk   // solo si se usa mac arm64
 FROM amazoncorretto:21-alpine-jdk
 WORKDIR /app
 EXPOSE 8005
