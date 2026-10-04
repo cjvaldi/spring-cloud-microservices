@@ -1,5 +1,7 @@
 # 🚀 Distributed Microservices Platform & Cloud Deployment
 
+[![Java CI/CD Pipeline](https://github.com/cjvaldi/spring-cloud-microservices/actions/workflows/ci.yml/badge.svg)](https://github.com/cjvaldi/spring-cloud-microservices/actions/workflows/ci.yml)
+
 Ecosistema de microservicios distribuido desarrollado con **Java 21**, **Spring Boot 3** y el ecosistema **Spring Cloud**. Diseñado bajo principios de desacoplamiento, resiliencia ante fallos, seguridad perimetral mediante OAuth2, observabilidad distribuida y despliegue contenerizado tanto en local como en la nube (**AWS**).
 
 ---
@@ -95,6 +97,7 @@ graph TD
 
 4. Despliegue Híbrido y Desacoplamiento de Datos: Soporte para ejecución en local vía Docker Compose conectando a contenedores de MySQL, y perfiles de producción preparados para consumir instancias gestionadas en Amazon RDS ejecutándose desde instancias virtuales en Amazon EC2.
 
+5. **Estrategia de Pruebas con Testcontainers & CI:** Pruebas de integración sobre la capa de persistencia (`msvc-products`) levantando contenedores efímeros de MySQL reales mediante **Testcontainers**, eliminando inconsistencias de sintaxis entre bases en memoria y producción. Automatización continua configurada mediante **GitHub Actions** para validar builds y ejecución de tests en cada Push o Pull Request.
 --- 
 
 # 🚀 Despliegue Rápido (Local con Docker Compose)
