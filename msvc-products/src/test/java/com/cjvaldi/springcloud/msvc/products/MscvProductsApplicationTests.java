@@ -1,4 +1,4 @@
-package com.cjvaldi.springcloud.msvc.products.mscv_products;
+package com.cjvaldi.springcloud.msvc.products;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
