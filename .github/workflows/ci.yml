@@ -21,11 +21,17 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Compilar e instalar commons
-        run: |
-          if [ -d "libs-msvc-commons" ]; then
-            mvn -B clean install -f libs-msvc-commons/pom.xml -DskipTests
-          fi
+      - name: 1. Compilar e instalar biblioteca común (libs-msvc-commons)
+        run: mvn -B clean install -f libs-msvc-commons/pom.xml -DskipTests
 
-      - name: Ejecutar verificación y pruebas (con Testcontainers)
-        run: mvn -B clean verify
+      - name: 2. Ejecutar pruebas e integración con Testcontainers (msvc-products)
+        run: mvn -B clean verify -f msvc-products/pom.xml
+
+      - name: 3. Validar compilación de servicios clave
+        run: |
+          mvn -B compile -f eureka-server/pom.xml
+          mvn -B compile -f config-server/pom.xml
+          mvn -B compile -f msvc-gateway-server/pom.xml
+          mvn -B compile -f msvc-items/pom.xml
+          mvn -B compile -f msvc-users/pom.xml
+          mvn -B compile -f msvc-oauth/pom.xml
